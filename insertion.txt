@@ -1,0 +1,426 @@
+create procedure dbo.ins_vehicle_work_done
+	@work_done_id int,
+	@vehicle_id int,
+	@vehicle_work_done_id int
+
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'vehicle_work_done', @vehicle_work_done_id output
+
+			if (@vehicle_work_done_id > 0)
+			begin
+				insert vehicle_work_done (
+					work_done_id,
+					vehicle_id,
+					vehicle_work_done_id
+				)
+				select
+					@work_done_id,
+					@vehicle_id,
+					@vehicle_work_done_id
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+create procedure dbo.ins_vehicle
+	@vehicle_id int,
+	@make_id int,
+	@model_id int,
+	@color_id int,
+	@year int,
+	@reg_id int
+
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'vehicle', @vehicle_id output
+
+			if (@vehicle_id > 0)
+			begin
+				insert vehicle (
+					vehicle_id,
+					make_id,
+					model_id,
+					color_id,
+					year,
+					reg_id
+				)
+				select
+					@vehicle_id,
+					@make_id,
+					@model_id,
+					@color_id,
+					@year,
+					@reg_id
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+create procedure dbo.ins_seat_burn
+	@seat_burn_id int,
+	@seat_burn_name varchar(50),
+	@price	numeric(8, 2)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'seat_burn', @seat_burn_id output
+
+			if (@seat_burn_id > 0)
+			begin
+				insert seat_burn (
+					seat_burn_id,
+					seat_burn_name,
+					price
+				)
+				select
+					@seat_burn_id,
+					@seat_burn_name,
+					@price
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+create procedure dbo.ins_rims
+	@rims_id int,
+	@rims_name varchar(50),
+	@price numeric(8, 2)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'rims', @rims_id output
+
+			if (@rims_id > 0)
+			begin
+				insert rims (
+					rims_id,
+					rims_name,
+					price
+				)
+				select
+					@rims_id,
+					@rims_name,
+					@price
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+alter procedure dbo.ins_registration
+	@reg_id int,
+	@license varchar(50),
+	@vin varchar(50),
+	@mileage int,
+	@unit varchar(50)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'registration', @reg_id output
+
+			if (@reg_id > 0)
+			begin
+				insert registration (
+					reg_id,
+					license,
+					vin,
+					mileage,
+					unit
+				)
+				select
+					@reg_id,
+					@license,
+					@vin,
+					@mileage,
+					@unit
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+create procedure dbo.ins_model
+	@model_id int,
+	@make_id int,
+	@model_name varchar(50)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'model', @model_id output
+
+			if (@model_id > 0)
+			begin
+				insert model (
+					model_id,
+					make_id,
+					model_name
+				)
+				select
+					@model_id,
+					@make_id,
+					@model_name
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+
+create procedure dbo.ins_misc
+	@misc_id int,
+	@misc_name varchar(50),
+	@price numeric(8, 2)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'misc', @misc_id output
+
+			if (@misc_id > 0)
+			begin
+				insert misc (
+					misc_id,
+					misc_name,
+					price
+				)
+				select
+					@misc_id,
+					@misc_name,
+					@price
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+create procedure dbo.ins_make
+	@make_id int,
+	@make_name varchar(50)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'make', @make_id output
+
+			if (@make_id > 0)
+			begin
+				insert make (
+					make_id,
+					make_name
+				)
+				select
+					@make_id,
+					@make_name
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+create procedure dbo.ins_door_panel_burn
+	@door_panel_burn_id int,
+	@door_panel_burn_name varchar(50),
+	@price numeric(8, 2)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'door_panel_burn', @door_panel_burn_id output
+
+			if (@door_panel_burn_id > 0)
+			begin
+				insert door_panel_burn (
+					door_panel_burn_id,
+					door_panel_burn_name,
+					price
+				)
+				select
+					@door_panel_burn_id,
+					@door_panel_burn_name,
+					@price
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+create procedure dbo.ins_color
+	@color_id int,
+	@color_name varchar(50)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'color', @color_id output
+
+			if (@color_id > 0)
+			begin
+				insert color (
+					color_id,
+					color_name
+				)
+				select
+					@color_id,
+					@color_name
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+
+create procedure dbo.ins_carpet_tear
+	@carpet_tear_id	int,
+	@carpet_tear_name varchar(50),
+	@price	numeric (8,2)
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'carpet_tear', @carpet_tear_id output
+
+			if (@carpet_tear_id > 0)
+			begin
+				insert carpet_tear (
+					carpet_tear_id,
+					carpet_tear_name,
+					price
+				)
+				select
+					@carpet_tear_id,
+					@carpet_tear_name,
+					@price
+			end
+			commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end
+
+
+
+
+
+create procedure dbo.ins_work_done
+	@work_done_id int,
+	@opdate date,
+	@door_panel_burn_id int,
+	@rims_id	int,
+	@carpet_tear_id	int,
+	@seat_burn_id	int,
+	@total_price		numeric(8, 2),
+	@misc_id	int
+
+as
+begin
+	begin try
+		begin tran
+			exec dbo.get_next_id 'work_done', @work_done_id output
+
+			if (@work_done_id > 0)
+			begin
+				insert work_done (
+					work_done_id,
+					opdate,
+					door_panel_burn_id,
+					rims_id,
+					carpet_tear_id,
+					seat_burn_id,
+					total_price,
+					misc_id
+				)
+				select
+					@work_done_id,
+					@opdate,
+					@door_panel_burn_id,
+					@rims_id,
+					@carpet_tear_id,
+					@seat_burn_id,
+					@total_price,
+					@misc_id
+			end
+	commit
+	end try
+
+	begin catch
+		rollback
+	end catch
+end

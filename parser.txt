@@ -1,0 +1,285 @@
+CREATE PROCEDURE [dbo].[parse_flat_table]
+
+as
+begin
+
+	delete from vehicle_work_done
+	delete from work_done
+	delete from rims
+	delete from seat_burn
+	delete from door_panel_burn
+	delete from carpet_tear
+	delete from vehicle
+	delete from registration
+	delete from model
+	delete from make
+	delete from color
+
+	--declare variables
+	declare @make varchar(50),
+			@model varchar(50),
+			@year int,
+			@mileage	int,
+			@license#	varchar(50),
+			@unit#	varchar(50),
+			@opdate	date,
+			@color	varchar(50),
+			@vin#	varchar(50),
+			@rims	varchar(50),
+			@seat_burn	varchar(50),
+			@door_panel_burn	varchar(50),
+			@carpet_tear	varchar(50),
+			@rims_price	numeric(8,2),
+			@seat_burn_price	numeric(8,2),
+			@door_panel_burn_price	numeric(8,2),
+			@carpet_tear_price	numeric(8,2)
+
+
+
+	declare	@rims_id	int,
+			@seat_burn_id	int,
+			@door_panel_burn_id	int,
+			@carpet_tear_id	int,
+			@work_done_id	int,
+			@color_id	int,
+			@reg_id	int,
+			@make_id	int,
+			@model_id	int,
+			@vehicle_id	int,
+			@total_price numeric(8,2)
+
+
+
+	declare cursA cursor
+	for
+	select
+		make,
+		model,
+		year,
+		mileage,
+		license#,
+		unit#,
+		vin#,
+		opdate,
+		rims,
+		rims_price,
+		door_panel_burn,
+		door_panel_burn_price,
+		seat_burns,
+		seat_burns_price,
+		carpet_tear,
+		carpet_tear_price
+
+	from
+		short_flat_table
+
+	open cursA
+	fetch next from cursA into @make, @model, @year, @mileage, @license#, @unit#, @opdate, @color, @vin#, @rims, @seat_burn, @door_panel_burn,
+		@carpet_tear, @rims_price, @seat_burn_price, @door_panel_burn_price, @carpet_tear_price
+	while ( @@FETCH_STATUS = 0 )
+		begin
+
+		-- insert vehicle make
+		select
+			@make_id = null
+		select
+			@make_id = make_id
+		from
+			make
+		where
+			make_name = @make
+
+		if(@make_id is null)
+		begin
+			exec ins_make @make, @make_id output
+		end
+		-- /insert vehicle make
+
+		-- insert vehicle model
+		select
+			@model_id = null
+		select
+			@model_id = model_id
+		from
+			model
+		where
+			model_name = @model
+
+		if(@model_id is null)
+		begin
+			exec ins_model @model, @model_id output
+		end
+		-- /insert vehicle model
+
+		-- insert vehicle registration
+		select
+			@reg_id = null
+		select
+			@reg_id = reg_id
+		from
+			registration
+		where
+			license = @license#
+		and	vin = @vin#
+		and mileage = @mileage
+		and unit = @unit#
+
+		if(@reg_id is null)
+		begin
+			exec ins_registration @license#, @vin#, @mileage, @unit#, @reg_id output
+		end
+		-- /insert vehicle registration
+
+		-- insert vehicle color
+		select
+			@color_id = null
+		select
+			@color_id = color_id
+		from
+			color
+		where
+			color_name = @color
+
+		if(@color_id is null)
+		begin
+			exec ins_color @color, @color_id output
+		-- /insert vehicle color
+
+		-- insert vehicle
+		select
+			@vehicle_id = null
+		select
+			@vehicle_id = vehicle_id
+		from
+			vehicle
+		where
+			make_id = @make_id
+		and	model_id = @model_id
+		and [YEAR] = @year
+		and	reg_id = @reg_id
+		and	color_id = @color_id
+
+		if(@vehicle_id is null)
+		begin
+			print 'creating vehicle'
+			exec ins_vehicle @make, @model, @year, @reg_id, @color_id, @vehicle_id output
+		end
+		-- /insert vehicle
+
+		-- /insert rims
+		select
+			@rims_id = null
+		select
+			@rims_id = rims_id
+		from
+			rims
+		where
+			rims_name = @rims
+		and	rims_price = @rims_price
+
+		if(@rims_id is null)
+		begin
+			exec ins_rims @rims_name, @rims_price, @rims_id output
+		end
+		-- /insert rims
+
+		-- insert door panel burn
+		select
+			@door_panel_burn_id = null
+		select
+			@door_panel_burn_id = door_panel_burn_id
+		from
+			door_panel_burn
+		where
+			door_panel_burn_name = @door_panel_burn
+		and	door_panel_burn_price = @door_panel_burn_price
+
+		if(@door_panel_burn_id is null)
+		begin
+			exec ins_door_panel_burn @door_panel_burn, @door_panel_burn_price, @door_panel_burn_id output
+		end
+		-- /insert door panel burn
+
+		-- insert carpet tear
+		select
+			@carpet_tear_id = null
+		select
+			@carpet_tear_id = carpet_tear_id
+		from
+			carpet_tear
+		where
+			carpet_tear_name = @carpet_tear
+		and	carpet_tear_price = @carpet_tear_price
+
+		if(@carpet_tear_id is null)
+		begin
+			exec ins_carpet_tear @carpet_tear, @carpet_tear_price, @carpet_tear_id output
+		end
+		-- /insert carpet tear
+
+		-- insert seat burn
+		select
+			@seat_burn_id = null
+		select
+			@seat_burn_id = seat_burn_id
+		from
+			seat_burn
+		where
+			seat_burn_name = @seat_burn
+		and	seat_burn_price = @seat_burn_price
+
+		if(@seat_burn_id is null)
+		begin
+			exec ins_seat_burn @seat_burn, @seat_burn_price, @seat_burn_id output
+		end
+		-- /insert seat burn
+
+		-- insert work done
+		select
+			@work_done_id = null
+		select
+			@work_done_id = work_done_id
+		from
+			work_done
+		where
+			op_date = @opdate
+		and	door_panel_burn_id = @door_panel_burn_id
+		and carpet_tear_id = @carpet_tear_id
+		and rims_id = @rims_id
+		and seat_burn_id = @seat_burn_id
+		and total_price = (@rims_price + @seat_burn_price + @carpet_tear_price + @door_panel_burn_price)
+
+		if(@work_done_id is null)
+		begin
+			exec ins_work_done @opdate, @door_panel_burn, @carpet_tear, @rims, @seat_burn, @total_price, @work_done_id output
+		end
+		-- /insert work done
+
+		-- tie the vehicle_id with the work_done_id
+		select
+			@exist = COUNT(*)
+		from
+			vehicle_work_done
+		where
+			work_done_id = @work_done_id
+		and vehicle_id = @vehicle_id
+
+		if(@exist = 0)
+		begin
+			insert vehicle_work_done
+			(
+				work_done_id,
+				vehicle_id
+			)
+			select
+				@work_done_id,
+				@vehicle_id
+		-- /end
+
+		fetch next from cursA into @make, @model, @year, @mileage, @license#, @unit#, @opdate, @color, @vin#, @rims, @seat_burn, @door_panel_burn,
+		@carpet_tear, @rims_price, @seat_burn_price, @door_panel_burn_price, @carpet_tear_price
+		end
+	close cursA
+	deallocate cursA
+
+end
